@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<title>Подключение — TaikoVPN</title>
+<style>
+  :root { --bg:#0d0f22; --card:#171a38; --line:#2b2f63; --text:#f2f4ff; --muted:#8e97c4; --a:#00e5ff; --b:#5070ff; --c:#aa46ff; }
+  * { box-sizing:border-box; }
+  body { margin:0; min-height:100vh; display:grid; place-items:center; padding:16px; color:var(--text);
+         font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+         background:radial-gradient(900px 500px at 50% 110%, #3a1d7a55, transparent), var(--bg); }
+  .card { width:100%; max-width:440px; background:var(--card); border:1px solid var(--line); border-radius:28px; padding:28px 22px; text-align:center; }
+  img.logo { width:88px; height:88px; border-radius:50%; }
+  h1 { margin:12px 0 4px; font-size:26px; }
+  p { color:var(--muted); margin:0 0 18px; }
+  .btn { display:block; width:100%; padding:16px; border:0; border-radius:999px; color:#fff; text-decoration:none; font:700 17px inherit;
+         cursor:pointer; margin-top:10px; background:linear-gradient(90deg,var(--a),var(--b) 55%,var(--c)); }
+  .btn.alt { background:transparent; border:1px solid var(--line); color:var(--text); font-weight:600; }
+  .row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .row .btn { font-size:15px; padding:13px 8px; }
+  small { display:block; margin-top:16px; color:var(--muted); }
+  #err { display:none; color:#ff6b7d; }
+</style>
+</head>
+<body>
+<div class="card">
+  <img class="logo" src="logo.png" alt="TaikoVPN">
+  <h1>Подключение</h1>
+  <p id="hint">Открываем приложение Happ…</p>
+  <p id="err">Ссылка подписки не найдена. Вернись в бота и нажми «Подключить в 1 клик» ещё раз.</p>
+  <a class="btn" id="open" href="#">📲 Открыть в Happ</a>
+  <button class="btn alt" id="copy">📋 Скопировать ссылку</button>
+  <div class="row">
+    <a class="btn alt" href="https://apps.apple.com/us/app/happ-proxy-utility/id6504287215">🍎 iPhone / Mac</a>
+    <a class="btn alt" href="https://play.google.com/store/apps/details?id=com.happproxy">🤖 Android</a>
+    <a class="btn alt" href="https://github.com/Happ-proxy/happ-desktop/releases/latest/download/setup-Happ.x64.exe">🪟 Windows</a>
+    <a class="btn alt" href="https://t.me/taikovpnbot">↩️ В бота</a>
+  </div>
+  <small>Если приложение не открылось: установи Happ, затем нажми «Скопировать ссылку» и в Happ выбери «+» → «Вставить из буфера».</small>
+</div>
+<script>
+  // https://YOUR-DOMAIN/connect.html#<subscription url>   (the part after # never reaches the server)
+  const sub = decodeURIComponent(location.hash.slice(1));
+  const ok = /^https?:\/\/[^\s"'<>]+$/i.test(sub);
+  const deep = 'happ://add/' + sub;
+  if (!ok) {
+    document.getElementById('hint').style.display = 'none';
+    document.getElementById('err').style.display = 'block';
+    document.getElementById('open').style.display = 'none';
+    document.getElementById('copy').style.display = 'none';
+  } else {
+    document.getElementById('open').href = deep;
+    document.getElementById('copy').onclick = async (e) => {
+      try { await navigator.clipboard.writeText(sub); e.target.textContent = '✅ Скопировано'; }
+      catch (_) { prompt('Скопируй ссылку:', sub); }
+    };
+    setTimeout(() => { location.href = deep; }, 400);   // try to open Happ automatically
+  }
+</script>
+</body>
+</html>
